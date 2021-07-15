@@ -164,6 +164,7 @@ sealed class Event {
     object OnboardingPrivateBrowsing : Event()
     object OnboardingFinish : Event()
     object ChangedToDefaultBrowser : Event()
+    object DefaultBrowserNotifTapped : Event()
 
     object LoginDialogPromptDisplayed : Event()
     object LoginDialogPromptCancelled : Event()
@@ -235,6 +236,13 @@ sealed class Event {
     // Home menu interaction
     object HomeMenuSettingsItemClicked : Event()
     object HomeScreenDisplayed : Event()
+
+    // Browser Toolbar
+    object BrowserToolbarHomeButtonClicked : Event()
+
+    // Start on Home
+    object StartOnHomeEnterHomeScreen : Event()
+    object StartOnHomeOpenTabsTray : Event()
 
     // Interaction events with extras
 
@@ -396,37 +404,8 @@ sealed class Event {
 
         enum class Source { APP_ICON, LINK, CUSTOM_TAB, UNKNOWN }
 
-        override val extras: Map<Events.appOpenedAllStartupKeys, String>?
-            get() = hashMapOf(Events.appOpenedAllStartupKeys.source to source.name)
-    }
-
-    data class AppAllStartup(
-        val source: Source,
-        val type: Type,
-        val hasSavedInstanceState: Boolean? = null,
-        var launchTime: Long? = null
-    ) : Event() {
-        enum class Source { APP_ICON, LINK, CUSTOM_TAB, UNKNOWN }
-        enum class Type { COLD, WARM, HOT, ERROR }
-
-        override val extras: Map<Events.appOpenedAllStartupKeys, String>?
-            get() {
-                val extrasMap = hashMapOf(
-                    Events.appOpenedAllStartupKeys.source to source.toString(),
-                    Events.appOpenedAllStartupKeys.type to type.toString()
-                )
-                // we are only sending hasSavedInstanceState whenever we get data from
-                // activity's oncreate() method.
-                if (hasSavedInstanceState != null) {
-                    extrasMap[Events.appOpenedAllStartupKeys.hasSavedInstanceState] =
-                        hasSavedInstanceState.toString()
-                }
-                if (launchTime != null) {
-                    extrasMap[Events.appOpenedAllStartupKeys.firstFramePreDrawNanos] =
-                        launchTime.toString()
-                }
-                return extrasMap
-            }
+        override val extras: Map<Events.appReceivedIntentKeys, String>?
+            get() = hashMapOf(Events.appReceivedIntentKeys.source to source.name)
     }
 
     data class CollectionSaveButtonPressed(val fromScreen: String) : Event() {
